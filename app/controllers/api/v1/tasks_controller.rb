@@ -9,6 +9,7 @@ module Api
 
         render json: @tasks
       end
+
       # GET /tasks/1
       def show
         render json: @task
@@ -27,7 +28,7 @@ module Api
 
       # PATCH/PUT /tasks/1
       def update
-        if @task.update(params[:task])
+        if @task.update_attributes(params[:task])
           render json: @task
         else
           render json: @task.errors, status: :unprocessable_entity
@@ -36,13 +37,18 @@ module Api
 
       # DELETE /tasks/1
       def destroy
-        @task.destroy
+        if @task.nil?
+          head :not_found
+        else
+          @task.destroy
+          head :no_content
+        end
       end
 
       private
 
       def set_task
-        @task = Task.find(params[:id])
+        @task = Task.find_by_id(params[:id])
       end
     end
   end
